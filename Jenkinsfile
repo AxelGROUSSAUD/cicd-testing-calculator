@@ -1,15 +1,15 @@
-def CONTAINER_NAME = "calculator"
 def ENV_NAME = getEnvName(env.BRANCH_NAME)
+def CONTAINER_NAME = "calculator-lunch"+ENV_NAME
 def CONTAINER_TAG = getTag(env.BUILD_NUMBER, env.BRANCH_NAME)
 def HTTP_PORT = getHTTPPort(env.BRANCH_NAME)
-def EMAIL_RECIPIENTS = "philippe.guemkamsimo@gmail.com"
+def EMAIL_RECIPIENTS = "axelgroussaud.dev@gmail.com"
 
 
 node {
     try {
         stage('Initialize') {
-            def dockerHome = tool 'dockerlatest'
-            def mavenHome = tool 'mavenlatest'
+            def dockerHome = tool 'DockerLatest'
+            def mavenHome = tool 'MavenLatest'
             env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
         }
 
@@ -77,7 +77,6 @@ def imageBuild(containerName, tag) {
 
 def pushToImage(containerName, tag, dockerUser, dockerPassword) {
     sh "docker login -u $dockerUser -p $dockerPassword"
-    sh "docker tag $containerName:$tag $dockerUser/$containerName:$tag"
     sh "docker push $dockerUser/$containerName:$tag"
     echo "Image push complete"
 }
@@ -99,14 +98,14 @@ String getEnvName(String branchName) {
     if (branchName == 'main') {
         return 'prod'
     }
-    return (branchName == 'develop') ? 'uat' : 'dev'
+    return (branchName == 'develop') ? '2' : '1'
 }
 
 String getHTTPPort(String branchName) {
     if (branchName == 'main') {
         return '9003'
     }
-    return (branchName == 'develop') ? '9002' : '9001'
+    return (branchName == 'develop') ? '9002' : '9000'
 }
 
 String getTag(String buildNumber, String branchName) {
